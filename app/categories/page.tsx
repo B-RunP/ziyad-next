@@ -111,7 +111,7 @@ export default function CategoriesPage() {
     fetch(`${apiBaseUrl}/api/v1/ecommerce/products/all/category?limit=12`).then((response) => response.json()).then((payload) => setProducts(normalizeProducts(payload))).catch(() => setProducts([]));
   }, []);
 
-  const visibleProducts = useMemo(() => products.length ? products : fallbackImages.map((image, index) => ({ id: String(index), name: ["The Book of Five Rings", "Treachery: Alpha Colony Book 8", "Blood on the Snow", "The Girl and the Last Sleepover", "Feral: Shadow Breed: Book 3", "The Story of Success", "The Murder of Roger Ackroyd", "City of the Dead", "The Dirty and the Dead", "The Beatles: GetBack"][index] ?? `Produk ${index + 1}`, category: "Koleksi Ziyad", author: "Ziyad Books", price: ["Rp439.83", "Rp814.66", "Rp216.98", "Rp125.00", "Rp938.78", "Rp50.89", "Rp283.47", "Rp628.28", "Rp997.03", "Rp802.88"][index] ?? "Rp0", fallback: image })), [products]);
+  const visibleProducts = useMemo(() => products.length ? products : fallbackImages.map((image, index) => ({ id: String(index), slug: undefined, name: ["The Book of Five Rings", "Treachery: Alpha Colony Book 8", "Blood on the Snow", "The Girl and the Last Sleepover", "Feral: Shadow Breed: Book 3", "The Story of Success", "The Murder of Roger Ackroyd", "City of the Dead", "The Dirty and the Dead", "The Beatles: GetBack"][index] ?? `Produk ${index + 1}`, category: "Koleksi Ziyad", author: "Ziyad Books", price: ["Rp439.83", "Rp814.66", "Rp216.98", "Rp125.00", "Rp938.78", "Rp50.89", "Rp283.47", "Rp628.28", "Rp997.03", "Rp802.88"][index] ?? "Rp0", fallback: image })), [products]);
 
   return (
     <main className="min-h-screen bg-white text-[#29252D]">
