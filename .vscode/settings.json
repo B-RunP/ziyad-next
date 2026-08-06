@@ -1,0 +1,17 @@
+{
+  "tailwindCSS.experimental.configFile": {
+    "./app/globals.css": "./app/**/*.{js,ts,jsx,tsx,mdx}"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    ".*ClassName"
+  ]
+}
