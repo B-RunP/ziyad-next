@@ -26,6 +26,8 @@ import {
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
 import { CategoryCarousel } from "./category-carousel";
+import { CartDrawer } from "../components/cart-drawer";
+import { addToCart, parsePrice } from "../components/cart-state";
 
 const shell = "mx-auto w-[calc(100%-40px)] max-w-[1280px]";
 
@@ -397,11 +399,11 @@ function ProductCard({
       <article role="link" tabIndex={0} onClick={() => { window.location.href = productHref(book.title, book.slug); }} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") window.location.href = productHref(book.title, book.slug); }} className="group relative min-w-0 cursor-pointer border-r border-[#e7ece6] px-4 pb-5 last:border-r-0 max-lg:border-b max-lg:pb-5 max-sm:px-2">
         <div className="relative grid min-h-[210px] place-items-center rounded-[10px] bg-transparent">
           <BookMockup title={book.title} tone={book.tone} image={book.image} fallbackImage={book.fallbackImage} />
-          <div className="absolute right-2 top-1/2 flex -translate-y-1/2 flex-col gap-2">
-            <button type="button" aria-label={`Sukai ${book.title}`} className="grid size-10 translate-x-3 place-items-center rounded-full bg-white text-[#29252D] opacity-0 shadow-[0_8px_20px_rgba(41,37,45,0.14)] transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
+          <div className="absolute bottom-3 right-3 flex flex-col gap-2">
+            <button type="button" aria-label={`Sukai ${book.title}`} className="grid size-10 translate-x-3 place-items-center rounded-full bg-white text-[#29252D] opacity-0 shadow-[0_8px_20px_rgba(41,37,45,0.14)] transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 hover:bg-[#ff5a4f] hover:text-white">
               <Heart size={19} strokeWidth={1.8} />
             </button>
-            <button type="button" aria-label={`Tambah ${book.title} ke keranjang`} className="grid size-10 translate-x-3 place-items-center rounded-full bg-white text-[#29252D] opacity-0 shadow-[0_8px_20px_rgba(41,37,45,0.14)] transition-all delay-150 duration-300 group-hover:translate-x-0 group-hover:opacity-100">
+            <button type="button" onClick={(event) => { event.stopPropagation(); addToCart({ id: book.slug || book.title, title: book.title, price: parsePrice(book.price), category: book.category, image: book.image, fallbackImage: book.fallbackImage }); }} aria-label={`Tambah ${book.title} ke keranjang`} className="grid size-10 translate-x-3 place-items-center rounded-full bg-white text-[#29252D] opacity-0 shadow-[0_8px_20px_rgba(41,37,45,0.14)] transition-all delay-75 duration-200 group-hover:translate-x-0 group-hover:opacity-100 hover:bg-[#ff5a4f] hover:text-white">
               <ShoppingBasket size={19} strokeWidth={1.8} />
             </button>
           </div>
@@ -525,6 +527,7 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [apiBooks, setApiBooks] = useState<Book[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -548,13 +551,23 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white text-[#1f2933]">
+      {false && (
+        <>
       <header className="hidden bg-white lg:block">
         <div className="overflow-hidden bg-[#d50b6f] text-white">
-          <div className="flex min-h-9 items-center justify-center gap-10 whitespace-nowrap px-6 text-xs font-bold">
-            <span>Limited-time offer!</span>
-            <span>#KIDUFUNTIME: &nbsp; Explore exclusive deals at Kidu! &nbsp; <u>SHOP NOW!</u></span>
-            <span className="hidden xl:inline">#WELCOME: &nbsp; Explore Deals & Offers &nbsp; <u>SHOP NOW!</u></span>
-            <span className="hidden 2xl:inline">#KIDUSAFESTYLE: &nbsp; Elevate Your Safety in Style</span>
+          <div className={`${shell} flex min-h-9 items-center whitespace-nowrap text-xs font-bold`}>
+            <span className="shrink-0 px-6">Penawaran terbatas!</span>
+            <div className="min-w-0 flex-1 overflow-hidden pl-4" aria-label="Promo berjalan">
+              <div className="marquee-track flex w-max shrink-0 items-center">
+                {[0, 1].map((copy) => (
+                  <div className="marquee-group flex shrink-0 items-center gap-10 pr-10" key={copy} aria-hidden={copy === 1}>
+                    <span>#PROMOZIYADBOOKS: &nbsp; Nikmati penawaran eksklusif di Ziyadbooks! &nbsp; <u>BELANJA SEKARANG!</u></span>
+                    <span className="hidden xl:inline">#SELAMATDATANG: &nbsp; Temukan promo dan penawaran terbaik &nbsp; <u>BELANJA SEKARANG!</u></span>
+                    <span className="hidden 2xl:inline">#GAYAAMANZIYADBOOKS: &nbsp; Tampil aman dan percaya diri setiap hari</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
         <div className="border-b border-[#eceeea] bg-[#f7f7f7]">
@@ -575,16 +588,16 @@ export default function Home() {
           <button type="button" className="inline-flex h-[54px] shrink-0 items-center gap-3 rounded-[10px] bg-[#1f2933] px-6 text-sm font-bold text-white"><Grip size={18} /> Produk Terbaru</button>
           <div className="flex h-[54px] flex-1 items-center rounded-[10px] bg-[#f3f3f3] px-5"><input className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[#7f8882]" placeholder="Cari buku favorit si kecil..." /><Search size={21} className="text-[#1f2933]" /></div>
           <a href="#" className="grid size-[54px] place-items-center rounded-[10px] bg-[#f3f3f3]" aria-label="Akun"><User size={21} /></a>
-          <a href="#" className="grid size-[54px] place-items-center rounded-[10px] bg-[#f3f3f3]" aria-label="Keranjang"><ShoppingBasket size={21} /></a>
+           <button type="button" onClick={() => setCartOpen(true)} className="grid size-[54px] place-items-center rounded-[10px] bg-[#f3f3f3]" aria-label="Keranjang"><ShoppingBasket size={21} /></button>
           <a href="#" className="flex h-[54px] items-center gap-2 rounded-[10px] bg-[#f3f3f3] px-6 text-sm font-semibold"><MapPin size={18} /> Lokasi Toko</a>
         </div>
       </header>
       <header className="hidden">
         <div className="bg-[#d50b6f] text-center text-xs font-bold text-white">
           <div className={`${shell} flex min-h-9 items-center justify-center gap-8 whitespace-nowrap`}>
-            <span>Limited-time offer!</span>
-            <span className="hidden sm:inline">#KIDUFUNTIME: Explore exclusive deals at Kidu! &nbsp; <u>SHOP NOW!</u></span>
-            <span className="hidden xl:inline">#WELCOME: Koleksi buku terbaik untuk si kecil &nbsp; <u>SHOP NOW!</u></span>
+            <span>Penawaran terbatas!</span>
+            <span className="hidden sm:inline">#PROMOZIYADBOOKS: Nikmati penawaran eksklusif di Ziyadbooks! &nbsp; <u>BELANJA SEKARANG!</u></span>
+            <span className="hidden xl:inline">#SELAMATDATANG: Temukan promo dan penawaran terbaik &nbsp; <u>BELANJA SEKARANG!</u></span>
           </div>
         </div>
         <div className="border-b border-[#e7ece6]">
@@ -687,14 +700,14 @@ export default function Home() {
                   </span>
                 </span>
               </a>
-              <a href="#" className="flex h-10 items-center px-4">
+              <button type="button" onClick={() => setCartOpen(true)} className="flex h-10 items-center px-4" aria-label="Keranjang">
                 <span className="relative inline-flex">
                   <ShoppingBasket size={20} className="hover:text-[#ff5a4f]" />
                   <span className="absolute -right-2.5 -top-2 grid size-4 place-items-center rounded-full bg-[#ff5a4f] text-[10px] leading-none font-extrabold text-white">
                     0
                   </span>
                 </span>
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -756,7 +769,7 @@ export default function Home() {
 
       <div className="lg:hidden">
         <div className="bg-[#d50b6f] px-4 py-2 text-center text-[11px] font-bold text-white">
-          Limited-time offer! &nbsp; <u>SHOP NOW!</u>
+          Penawaran terbatas! &nbsp; <u>BELANJA SEKARANG!</u>
         </div>
         <div className={`${shell} flex min-h-[74px] items-center justify-between gap-4`}>
           <Image src="/ziyadbooks.png" alt="Ziyad Books" width={135} height={42} />
@@ -772,7 +785,7 @@ export default function Home() {
         <div className={`${shell} flex items-center justify-between gap-3 pb-4`}>
           <button className="grid size-12 place-items-center rounded-[10px] bg-[#f7f7f7]" aria-label="Cari buku"><Search size={21} /></button>
           <a href="#" className="grid size-12 place-items-center rounded-[10px] bg-[#f7f7f7]" aria-label="Akun"><User size={21} /></a>
-          <a href="#" className="grid size-12 place-items-center rounded-[10px] bg-[#f7f7f7]" aria-label="Keranjang"><ShoppingBasket size={21} /></a>
+           <button type="button" onClick={() => setCartOpen(true)} className="grid size-12 place-items-center rounded-[10px] bg-[#f7f7f7]" aria-label="Keranjang"><ShoppingBasket size={21} /></button>
           <a href="#" className="grid size-12 place-items-center rounded-[10px] bg-[#f7f7f7]" aria-label="Lokasi toko"><MapPin size={21} /></a>
         </div>
       </div>
@@ -807,6 +820,8 @@ export default function Home() {
           <div className="absolute bottom-8 left-0 flex w-full justify-center gap-5 text-xs text-[#1f2933]"><span>🇮🇩 &nbsp; IDR <ChevronDown className="inline" size={13} /></span><span className="border-l border-[#9da59f] pl-5">Indonesia <ChevronDown className="inline" size={13} /></span></div>
         </div>
       ) : null}
+        </>
+      )}
 
       {(() => {
         const slides = [
@@ -1079,7 +1094,7 @@ export default function Home() {
         },
       ].map((section) => (
         <section
-          className={`${shell} grid grid-cols-[minmax(0,1fr)_300px] items-stretch gap-6 pt-14 max-lg:grid-cols-1`}
+          className={`${shell} grid grid-cols-[minmax(0,1fr)_300px] items-stretch gap-6 pt-30 max-lg:grid-cols-1`}
           key={section.title}
         >
           <div>
@@ -1099,39 +1114,6 @@ export default function Home() {
           />
         </section>
       ))}
-
-      {/* <section className="mt-[70px] bg-[#f4f7fb] py-14">
-        <div className={shell}>
-          <SectionTitle title="Latest Blog Post" />
-          <div className="grid grid-cols-3 gap-5 max-sm:grid-cols-1">
-            {posts.map((post) => (
-              <article className="rounded-[10px] bg-white p-3" key={post.title}>
-                <div className={`post-image ${post.tone}`} />
-                <p className="mt-3.5 mb-1.5 text-xs font-extrabold text-[#ff5a4f]">
-                  {post.meta}
-                </p>
-                <h3 className="m-0 min-h-14 text-[19px] leading-snug font-extrabold">
-                  {post.title}
-                </h3>
-                <a className="text-xs font-extrabold text-[#ff5a4f]" href="#">
-                  Read More
-                </a>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
-      {/* <section
-        className={`${shell} grid grid-cols-5 gap-4 py-11 text-center font-black text-[#59625c] max-sm:grid-cols-1`}
-        aria-label="Partner dan program"
-      >
-        {["Books Travel", "Buku Anak", "Books for Life", "Story Club", "Kompetisi Membaca"].map(
-          (brand) => (
-            <span key={brand}>{brand}</span>
-          ),
-        )}
-      </section> */}
 
       <section
         className={`${shell} mt-20 grid min-h-[168px] grid-cols-[1fr_420px] items-center gap-7 rounded-[14px] bg-[#f3b0ad] bg-[linear-gradient(90deg,rgba(255,255,255,0.28),transparent)] p-8 max-lg:grid-cols-1 max-sm:p-6`}
@@ -1185,7 +1167,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="bg-white py-14">
+      {false && (<footer className="bg-white py-14">
         <div className={`${shell} grid grid-cols-[1.35fr_1.25fr_repeat(3,1fr)] gap-9 max-lg:grid-cols-2 max-sm:grid-cols-1`}>
           <div className="flex flex-col items-start gap-2">
             <a
@@ -1228,7 +1210,8 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </footer>
+      </footer>)}
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </main>
   );
 }

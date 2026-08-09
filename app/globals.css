@@ -32,6 +32,11 @@ input {
   font: inherit;
 }
 
+button,
+a {
+  cursor: pointer;
+}
+
 .hero-surface {
   background:
     radial-gradient(circle at 85% 20%, rgba(231, 176, 91, 0.1) 0%, transparent 40%),
@@ -84,6 +89,25 @@ input {
 @keyframes float-delayed {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(12px); }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 24s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
 }
 
 .animate-float {

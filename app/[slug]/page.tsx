@@ -36,16 +36,6 @@ function formatPrice(value: number | undefined, formatted?: string) {
   return typeof value === "number" ? `Rp ${value.toLocaleString("id-ID")}` : "Harga belum tersedia";
 }
 
-function ProductHeader() {
-  return (
-    <header className="border-b border-[#F1F1F1] bg-white">
-      <div className="bg-[#D5006D] text-white"><div className="mx-auto flex min-h-9 max-w-[1280px] items-center justify-center gap-10 whitespace-nowrap px-5 text-xs font-bold"><span>Limited-time offer!</span><span className="hidden sm:inline">#KIDUFUNTIME: &nbsp; Explore exclusive deals at Kidu! &nbsp; <u>SHOP NOW!</u></span></div></div>
-      <div className="hidden border-b border-[#F1F1F1] bg-[#FAFAFA] lg:block"><div className="mx-auto flex min-h-[100px] w-[calc(100%-40px)] max-w-[1280px] items-center justify-between gap-8"><Link href="/" className="shrink-0"><img src="/ziyadbooks.png" alt="Ziyad Books" className="h-auto w-[200px]" /></Link><nav className="flex flex-1 items-center justify-center gap-8 text-[15px] font-semibold"><Link href="/" className="text-[#D5006D]">Home</Link><span className="flex items-center gap-1.5">Catalog <ChevronDown size={14} /></span><span className="flex items-center gap-1.5">Sale <b className="rounded-full bg-[#D5006D] px-2 py-0.5 text-[9px] text-white">FLASH</b><ChevronDown size={14} /></span><span className="flex items-center gap-1.5">Snap Deal <b className="rounded-full bg-[#5B469B] px-2 py-0.5 text-[9px] text-white">WOW</b></span><span className="flex items-center gap-1.5">Shop by Category <ChevronDown size={14} /></span><span className="flex items-center gap-1.5">Resources <ChevronDown size={14} /></span></nav><div className="flex items-center gap-2 whitespace-nowrap text-sm"><span>ID</span><span>IDR</span><ChevronDown size={13} /><span className="mx-2 h-5 border-l border-[#dfe4df]" /><span>Indonesia</span><ChevronDown size={13} /></div></div></div>
-      <div className="mx-auto flex min-h-[92px] w-[calc(100%-40px)] max-w-[1280px] items-center gap-4"><button className="hidden h-[54px] shrink-0 items-center gap-3 rounded-[10px] bg-[#29252D] px-7 text-sm font-bold text-white lg:inline-flex"><Grip size={18} /> Produk Terbaru</button><div className="flex h-[54px] flex-1 items-center rounded-[10px] bg-[#FAFAFA] px-6 text-[#7c8580]"><input className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-[#7c8580]" placeholder="Cari buku favorit si kecil..." /><Search size={22} /></div><button className="grid size-[54px] place-items-center rounded-[10px] bg-[#FAFAFA] lg:hidden" aria-label="Menu"><Menu size={22} /></button><span className="grid size-[54px] place-items-center rounded-[10px] bg-[#FAFAFA]"><User size={21} /></span><span className="grid size-[54px] place-items-center rounded-[10px] bg-[#FAFAFA]"><ShoppingBasket size={21} /></span><span className="hidden h-[54px] items-center gap-2 rounded-[10px] bg-[#FAFAFA] px-6 text-sm font-semibold lg:inline-flex"><MapPin size={18} /> Lokasi Toko</span></div>
-    </header>
-  );
-}
-
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<ProductDetail | null>(null);
@@ -78,7 +68,7 @@ export default function ProductDetailPage() {
   const originalPrice = product.price_original && product.price_original > (product.price_final ?? 0) ? formatPrice(product.price_original, product.price_original_formatted) : null;
 
   return (
-    <main className="min-h-screen bg-white text-[#29252D]"><ProductHeader />
+    <main className="min-h-screen bg-white text-[#29252D]">
       <div className="mx-auto w-[calc(100%-40px)] max-w-[1280px] py-8 md:py-12">
         <div className="mb-7 flex items-center gap-2 text-sm text-[#7c8580]"><Link href="/" className="hover:text-[#D5006D]">Home</Link><ChevronRight size={15} /><Link href="/categories" className="hover:text-[#D5006D]">Products</Link><ChevronRight size={15} /><span className="truncate text-[#29252D]">{product.name}</span></div>
         <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-7">
