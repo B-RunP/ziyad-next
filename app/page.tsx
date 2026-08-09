@@ -28,6 +28,7 @@ import Image from "next/image";
 import { CategoryCarousel } from "./category-carousel";
 import { CartDrawer } from "../components/cart-drawer";
 import { addToCart, parsePrice } from "../components/cart-state";
+import Link from "next/link";
 
 const shell = "mx-auto w-[calc(100%-40px)] max-w-[1280px]";
 
@@ -345,12 +346,12 @@ function SectionTitle({
         {title}
       </h2>
       <span className="h-px flex-1 bg-[#e7ece6] max-sm:hidden" aria-hidden="true" />
-      <a
+      <Link
         className="inline-flex min-h-8 items-center rounded-full bg-[#ff5a4f] px-4 text-xs font-extrabold text-white"
-        href="#"
+        href="/categories"
       >
         {label}
-      </a>
+      </Link>
     </div>
   );
 }
