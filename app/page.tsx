@@ -30,6 +30,8 @@ import { CartDrawer } from "../components/cart-drawer";
 import { addToCart, parsePrice } from "../components/cart-state";
 import Link from "next/link";
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
+
 const shell = "mx-auto w-[calc(100%-40px)] max-w-[1280px]";
 
 const searchCategories = [
@@ -309,8 +311,7 @@ function normalizeApiBooks(payload: unknown): Book[] {
     const oldPrice = item.old_price ?? item.original_price ?? item.compare_at_price ?? price;
 
     const rawImage = typeof item.image === "string" ? item.image : typeof item.image_url === "string" ? item.image_url : typeof item.imageUrl === "string" ? item.imageUrl : typeof item.thumbnail === "string" ? item.thumbnail : typeof image === "string" ? image : undefined;
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
-    const resolvedImage = rawImage && /^https?:\/\//i.test(rawImage) ? rawImage : rawImage ? `${apiBaseUrl}/${rawImage.replace(/^\/+/, "")}` : undefined;
+    const resolvedImage = rawImage && /^(https?:\/\/|data:)/i.test(rawImage) ? rawImage : rawImage ? `${apiBaseUrl}/${rawImage.replace(/^\/+/, "")}` : undefined;
 
     const fallbackImages = ["/product-1.avif", "/product-2.jpg", "/product-3.avif", "/product-4.jpg", "/product-5.avif", "/product-6.jpg", "/product-7.avif", "/product-8.jpg", "/product-9.avif", "/product-10.avif"];
 
@@ -533,8 +534,7 @@ export default function Home() {
   useEffect(() => {
     let active = true;
 
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
-    fetch(`${apiBaseUrl}/api/v1/ecommerce/products/all/category?limit=12`)
+    fetch("/api/proxy/api/v1/ecommerce/products/all/category?limit=12")
       .then((response) => response.json())
       .then((payload) => {
         if (active) setApiBooks(normalizeApiBooks(payload));

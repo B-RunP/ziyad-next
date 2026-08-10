@@ -36,6 +36,10 @@ function formatPrice(value: number | undefined, formatted?: string) {
   return typeof value === "number" ? `Rp ${value.toLocaleString("id-ID")}` : "Harga belum tersedia";
 }
 
+function resolveImageUrl(image: string) {
+  return /^(https?:\/\/|data:)/i.test(image) ? image : `${apiBaseUrl}/${image.replace(/^\/+/, "")}`;
+}
+
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<ProductDetail | null>(null);
@@ -47,7 +51,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!slug) return;
-    fetch(`${apiBaseUrl}/api/v1/ecommerce/products/${encodeURIComponent(slug)}/detail`)
+    fetch(`/api/proxy/api/v1/ecommerce/products/${encodeURIComponent(slug)}/detail`)
       .then((response) => { if (!response.ok) throw new Error("Produk tidak ditemukan"); return response.json(); })
       .then((payload: { data?: ProductDetail }) => { if (!payload.data) throw new Error("Data produk tidak tersedia"); setProduct(payload.data); })
       .catch((requestError: Error) => setError(requestError.message || "Gagal memuat detail produk"))
@@ -56,7 +60,7 @@ export default function ProductDetailPage() {
 
   const images = useMemo(() => {
     if (!product) return [];
-    const all = [product.display_photo, ...(product.fotos ?? []).map((photo) => photo.url)].filter((image): image is string => Boolean(image));
+    const all = [product.display_photo, ...(product.fotos ?? []).map((photo) => photo.url)].filter((image): image is string => Boolean(image)).map(resolveImageUrl);
     return [...new Set(all)];
   }, [product]);
 

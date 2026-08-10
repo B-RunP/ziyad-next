@@ -6,6 +6,7 @@ import { ArrowLeft, ChevronDown, ChevronRight, Grid2X2, Grip, Heart, List, MapPi
 import Link from "next/link";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
+
 const fallbackImages = ["/product-1.avif", "/product-2.jpg", "/product-3.avif", "/product-4.jpg", "/product-5.avif", "/product-6.jpg", "/product-7.avif", "/product-8.jpg", "/product-9.avif", "/product-10.avif"];
 const genres = ["Merchandise", "Flash Sale", "Kitab & Referensi", "Spiritualitas & Ibadah", "Promo Spesial", "Keluarga & Parenting", "Pengetahuan & Aktivitas Anak", "Edutoys", "Hobi & Kesehatan", "Kisah Hikmah & Motivasi", "Pre Order", "Remaja & Muslimah", "Pendidikan & Penunjang Sekolah", "Produk Ecer"];
 const authors = ["Arthur Gonzalez", "Dana Chambers", "Ernesto Wade", "Karla Newman", "Misty Figueroa", "Rita James", "Suzanne Casey"];
@@ -51,7 +52,7 @@ function normalizeProducts(payload: unknown): Product[] {
       author: String(item.author_name ?? item.authorName ?? item.author ?? "Ziyad Books"),
       price: money(item.price ?? item.sale_price ?? item.selling_price ?? item.sellingPrice),
       stockLabel: typeof item.sisastok_label === "string" ? item.sisastok_label : typeof item.sisastokLabel === "string" ? item.sisastokLabel : undefined,
-      image: image && /^https?:\/\//i.test(image) ? image : image ? `${apiBaseUrl}/${image.replace(/^\/+/, "")}` : undefined,
+      image: image && /^(https?:\/\/|data:)/i.test(image) ? image : image ? `${apiBaseUrl}/${image.replace(/^\/+/, "")}` : undefined,
       fallback: fallbackImages[index % fallbackImages.length],
     };
   });
@@ -108,7 +109,7 @@ export default function CategoriesPage() {
   const [filterOpen, setFilterOpen] = useState(false);
 
   useEffect(() => {
-    fetch(`${apiBaseUrl}/api/v1/ecommerce/products/all/category?limit=12`).then((response) => response.json()).then((payload) => setProducts(normalizeProducts(payload))).catch(() => setProducts([]));
+    fetch("/api/proxy/api/v1/ecommerce/products/all/category?limit=12").then((response) => response.json()).then((payload) => setProducts(normalizeProducts(payload))).catch(() => setProducts([]));
   }, []);
 
   const visibleProducts = useMemo(() => products.length ? products : fallbackImages.map((image, index) => ({ id: String(index), slug: undefined, name: ["The Book of Five Rings", "Treachery: Alpha Colony Book 8", "Blood on the Snow", "The Girl and the Last Sleepover", "Feral: Shadow Breed: Book 3", "The Story of Success", "The Murder of Roger Ackroyd", "City of the Dead", "The Dirty and the Dead", "The Beatles: GetBack"][index] ?? `Produk ${index + 1}`, category: "Koleksi Ziyad", author: "Ziyad Books", price: ["Rp439.83", "Rp814.66", "Rp216.98", "Rp125.00", "Rp938.78", "Rp50.89", "Rp283.47", "Rp628.28", "Rp997.03", "Rp802.88"][index] ?? "Rp0", fallback: image })), [products]);
